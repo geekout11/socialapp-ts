@@ -11,6 +11,7 @@
   "dependencies": {
     "@leecheuk/react-google-login": "^5.4.1",
     "@next/font": "13.1.1",
+    "@react-oauth/google": "^0.5.1",
     "@sanity/client": "^3.4.1",
     "@types/node": "18.11.18",
     "@types/react": "18.0.26",
@@ -19,6 +20,7 @@
     "dotenv": "^16.0.3",
     "eslint": "8.31.0",
     "eslint-config-next": "13.1.1",
+    "jwt-decode": "^3.1.2",
     "next": "13.1.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",

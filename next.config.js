@@ -2,7 +2,13 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['images2.alphacoders.com']
+    domains: [
+      'lh3.googleusercontent.com',
+      'cdn.pixabay.com',
+      'p16-amd-va.tiktokcdn.com',
+      'image.shutterstock.com',
+      'images2.alphacoders.com'
+    ],
   }
 }
 
