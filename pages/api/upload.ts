@@ -2,7 +2,7 @@ import nextConnect from 'next-connect';
 import multer from 'multer';
 
 const handler = nextConnect();
-const upload = multer({ dest: 'uploads/' });
+const upload = multer();
 
 handler.post(upload.single('file'), (req, res) => {
   // the file is now uploaded and stored in the 'uploads' directory

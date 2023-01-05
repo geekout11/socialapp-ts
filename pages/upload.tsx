@@ -3,31 +3,43 @@ import { SanityAssetDocument } from '@sanity/client';
 import { useRouter } from 'next/router';
 import { FaCloudUploadAlt } from 'react-icons/fa';
 import { MdDelete } from 'react-icons/md';
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { useRef } from 'react';
 import useAuthStore from '../store/authStore';
 import { client } from '../utils/client';
 import { topics } from '../utils/constants';
 import FileUpload from '../components/FileUpload';
+import NextNProgress from 'nextjs-progressbar';
+import { ref, uploadBytesResumable, getDownloadURL } from '@firebase/storage'
+import { Button, Card, Input, List, message, Image, Progress } from 'antd'
+import { storage } from '../firebaseConfig'
+
 
 const Upload = () => {
     const [caption, setCaption] = useState('');
     const [topic, setTopic] = useState<String>(topics[0].name);
-    const [loading, setLoading] = useState<Boolean>(false);
+    const [isUploading, setIsUploading] = useState(false)
     const [savingPost, setSavingPost] = useState<Boolean>(false);
     const [videoAsset, setVideoAsset] = useState<SanityAssetDocument | undefined>();
     const [wrongFileType, setWrongFileType] = useState<Boolean>(false);
+    const [imageFile, setImageFile] = useState<File>()
+    const [progressUpload, setProgressUpload] = useState(0)
 
     const userProfile: any = useAuthStore((state: any) => state.userProfile);
     const router = useRouter();
 
-// console.log(fileInputRef)
 
+    // console.log(fileInputRef)
 
-    useEffect(() => {
-        if (!userProfile) router.push('/');
-    }, [userProfile, router]);
+    const handleSelectedFile = (files: any) => {
+        if (files && files[0].size < 10000000000000000) {
+            setImageFile(files[0])
 
+            console.log(files[0])
+        } else {
+            message.error('File size to large')
+        }
+    }
 
     const uploadVideo = async (e: any) => {
         const selectedFile = e.target.files[0];
@@ -36,7 +48,7 @@ const Upload = () => {
         // uploading asset to sanity
         if (fileTypes.includes(selectedFile.type)) {
             setWrongFileType(false);
-            setLoading(true);
+            setIsUploading(true);
 
             client.assets
                 .upload('file', selectedFile, {
@@ -45,13 +57,53 @@ const Upload = () => {
                 })
                 .then((data) => {
                     setVideoAsset(data);
-                    setLoading(false);
+                    setIsUploading(false);
                 });
         } else {
-            setLoading(false);
+            setIsUploading(false);
             setWrongFileType(true);
         }
     };
+
+    const handleUploadFile = (files: any) => {
+        if (imageFile) {
+            const name = imageFile.name
+            const storageRef = ref(storage, `image/${name}`)
+            const uploadTask = uploadBytesResumable(storageRef, imageFile)
+
+            uploadTask.on(
+                'state_changed',
+                (snapshot) => {
+                    const progress: any =
+                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+
+                    setProgressUpload(progress.toFixed()) // to show progress upload
+
+                    switch (snapshot.state) {
+                        case 'paused':
+                            console.log('Upload is paused')
+                            break
+                        case 'running':
+                            console.log('Upload is running')
+                            break
+                    }
+                },
+                (error) => {
+                    message.error(error.message)
+                },
+            )
+        } else {
+            message.error('File not found')
+        }
+    }
+
+    const handleRemoveFile = () => setImageFile(undefined)
+
+
+    useEffect(() => {
+        if (!userProfile) router.push('/');
+    }, [userProfile, router]);
+
 
     const handlePost = async () => {
         if (caption && videoAsset?._id && topic) {
@@ -96,61 +148,57 @@ const Upload = () => {
                         <p className='text-2xl font-bold'>Upload Video</p>
                         <p className='text-md text-gray-400 mt-1'>Post a video to your account</p>
                     </div>
-                    <div className=' border-dashed rounded-xl border-4 border-gray-200 flex flex-col justify-center items-center  outline-none mt-10 w-[260px] h-[458px] p-10 cursor-pointer hover:border-red-300 hover:bg-gray-100'>
-                        {loading ? (
-                            <p className='text-center text-3xl text-red-400 font-semibold'>
-                                Uploading...
-                            </p>
-                        ) : (
-                            <div>
-                                {!videoAsset ? (
-                                    <label className='cursor-pointer'>
-                                        <div className='flex flex-col items-center justify-center h-full'>
-                                            <div className='flex flex-col justify-center items-center'>
-                                                <p className='font-bold text-xl'>
-                                                    <FaCloudUploadAlt className='text-gray-300 text-6xl' />
-                                                </p>
-                                                <p className='text-xl font-semibold'>
-                                                    Select video to upload
-                                                </p>
-                                            </div>
+                    <div className='border-dashed rounded-xl border-4 border-gray-200 flex flex-col justify-center items-center  outline-none mt-10 w-[260px] h-[458px] cursor-pointer hover:border-red-300 hover:bg-gray-100'>
+                        <Input
+                            type="file"
+                            placeholder="Select file to upload"
+                            accept=""
+                            className='flex justify-center items-center'
+                            onChange={(files) => {
+                                handleSelectedFile(files.target.files)
+                                uploadVideo(files)
+                            }}
+                        />
 
-                                            <p className='text-gray-400 text-center mt-2 text-sm leading-10'>
-                                                MP4 or WebM or ogg
-                                            </p>
-                                            <p className='bg-[#F51997] text-center mt-8 rounded text-white text-md font-medium p-2 w-52 outline-none'>
-                                                Select file
-                                            </p>
-                                        </div>
-                                        <input
-                                            type='file'
-                                            name='upload-video'
-                                            onChange={(e) => uploadVideo(e)}
-                                            className='w-0 h-0'
+                        <Card className='h-[458px] w-[252px] flex justify-center items-center'>
+                            {imageFile && (
+                                <>
+                                    <List.Item
+                                        className='flex justify-center items-center font-semibold w-full mb-5 ml-12'
+                                        extra={[
+                                            <Button
+                                                key="btnRemoveFile"
+                                                onClick={handleRemoveFile}
+                                                type="text"
+                                                icon={<i className="fas fa-times"></i>}
+                                            />,
+                                        ]}
+                                    >
+
+                                        <List.Item.Meta
+                                            title={imageFile.name}
+                                            description={`Size: ${imageFile.size}`}
                                         />
-                                    </label>
-                                ) : (
-                                    <div className=' rounded-3xl w-[300px]  p-4 flex flex-col gap-6 justify-center items-center mt-3'>
-                                        <video
-                                            className='rounded-xl h-[462px] mt-16 bg-black'
-                                            controls
-                                            loop
-                                            src={videoAsset?.url}
-                                        />
-                                        <div className=' flex justify-between gap-20'>
-                                            <p className='text-lg'>{videoAsset.originalFilename}</p>
-                                            <button
-                                                type='button'
-                                                className=' rounded-full bg-gray-200 text-red-400 p-2 text-xl cursor-pointer outline-none hover:shadow-md transition-all duration-500 ease-in-out'
-                                                onClick={() => setVideoAsset(undefined)}
+                                    </List.Item>
+
+
+                                    <div>
+                                        <div className='flex justify-center items-center'>
+                                            <Button
+                                                loading={isUploading}
+                                                type="primary"
+                                                onClick={handleUploadFile}
+                                                className='bg-[#F51997] text-white text-md font-medium rounded w-28  outline-none flex justify-center'
                                             >
-                                                <MdDelete />
-                                            </button>
+                                                Upload
+                                            </Button>
                                         </div>
+
+                                        <Progress className='w-[100%] flex items-center mt-4 ml-3' percent={progressUpload} />
                                     </div>
-                                )}
-                            </div>
-                        )}
+                                </>
+                            )}
+                        </Card>
                     </div>
                     {wrongFileType && (
                         <p className='text-center text-xl text-red-400 font-semibold mt-4 w-[260px]'>
@@ -204,7 +252,7 @@ const Upload = () => {
                 </div>
             </div>
         </div>
-    );
+    )
 };
 
 export default Upload;

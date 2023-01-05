@@ -9,6 +9,7 @@ import Logo from '../utils/tiktik-logo.png'
 import { GoogleLogin, googleLogout } from '@react-oauth/google'
 import { createOrGetUser } from '../utils'
 import useAuthStore from '../store/authStore'
+import NextNProgress from "nextjs-progressbar";
 
 interface UserProfile {
     image: string;
