@@ -1,8 +1,13 @@
-import { NextPage } from 'next';
+/* BASIC */
 import axios from 'axios';
-import { Video } from '../types'
+
+/* COMPONENTS */
 import VideoCard from '../components/VideoCard';
 import NoResults from '../components/NoResults';
+
+/* TYPES */
+
+import { Video } from '../types'
 
 interface VideoProps {
   videos: Video[]

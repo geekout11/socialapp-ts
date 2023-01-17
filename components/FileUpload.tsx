@@ -1,10 +1,11 @@
+/* BASIC */
 import { useRef } from 'react';
 
 const FileUpload = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = () => {
-    const file = fileInputRef.current?.files![0];
+    const file: any = fileInputRef.current?.files![0];
     const formData = new FormData();
     formData.append('file', file);
 

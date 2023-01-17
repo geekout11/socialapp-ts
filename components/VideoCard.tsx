@@ -1,11 +1,18 @@
+/* BASIC */
 import { useState, useEffect, useRef } from 'react'
-import { Video } from '../types'
+ 
+/* NEXT */
 import { NextPage } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+
+/* ICONS */
 import { HiVolumeUp, HiVolumeOff } from 'react-icons/hi'
 import { BsFillPlayFill, BsFillPauseFill, BsPlay } from 'react-icons/bs'
 import { GoVerified } from 'react-icons/go'
+
+/* TYPES */
+import { Video } from '../types'
 
 interface VideoProps {
   post: Video;
@@ -59,8 +66,6 @@ const VideoCard: NextPage<VideoProps> = ({ post: { caption, postedBy, video, _id
     )
   }
 
-  // console.log(video)
-console.log(postedBy)
   return (
     <div className='flex flex-col border-b-2 border-gray-200 pb-6'>
       <div>
@@ -86,9 +91,6 @@ console.log(postedBy)
                   {postedBy?.userName}{' '}
                   <GoVerified className='text-blue-400 text-md' />
                 </p>
-                {/* <p className='capitalize font-medium text-xs text-gray-500 hidden md:block'>
-                  {postedBy.userName}
-                </p> */}
               </div>
             </Link>
             <Link href={`/detail/${_id}`}>

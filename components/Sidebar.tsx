@@ -1,13 +1,16 @@
+/* BASIC */
 import { useState } from 'react'
-import { NextPage } from 'next'
-import { useRouter } from 'next/router';
-import Link from 'next/link'
 import GoogleLogin from '@leecheuk/react-google-login'
-import { AiFillHome, AiOutlineMenu } from 'react-icons/ai'
-import { ImCancelCircle } from 'react-icons/im'
 import Discover from './Discover';
 import SuggestedAccounts from './SuggestedAccounts';
 import Footer from './Footer';
+
+/* NEXT */
+import Link from 'next/link'
+
+/* ICONS */
+import { AiFillHome, AiOutlineMenu } from 'react-icons/ai'
+import { ImCancelCircle } from 'react-icons/im'
 
 const Sidebar = () => {
     const [showSidebar, setShowSidebar] = useState(true);

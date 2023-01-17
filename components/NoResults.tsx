@@ -5,7 +5,7 @@ interface IProps {
 const NoResults = ({ text }: IProps) => {
     return (
         <div className='mt-6 hidden xl:block'>
-
+            NoResult
         </div>
     )
 }
