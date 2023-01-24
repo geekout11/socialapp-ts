@@ -8,6 +8,9 @@ import { BsFillPlayFill } from 'react-icons/bs'
 import { HiVolumeUp, HiVolumeOff } from 'react-icons/hi'
 import axios from 'axios'
 import { Video } from '../../types'
+import useAuthStore from '../../store/authStore'
+import LikeButton from '../../components/LikeButton'
+import Comments from '../../components/Comments'
 
 type PostDetails = {
     postDetails: Video
@@ -18,6 +21,7 @@ const Detail = ({ postDetails }: PostDetails) => {
     const [playing, setPlaying] = useState(false)
     const [isVideoMuted, setIsVideoMuted] = useState(false)
     const router = useRouter()
+    const { userProfile } = useAuthStore();
 
     const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -36,6 +40,17 @@ const Detail = ({ postDetails }: PostDetails) => {
             videoRef.current.muted = isVideoMuted;
         }
     }, [post, isVideoMuted]);
+
+    const handleLike = async (like: boolean) => {
+        if (userProfile) {
+            const res = await axios.put(`http://localhost:3000/api/like`, {
+                userId: userProfile._id,
+                postId: post._id,
+                like
+            });
+            setPost({ ...post, likes: res.data.likes });
+        }
+    };
 
     if (!post) {
         return null
@@ -103,6 +118,16 @@ const Detail = ({ postDetails }: PostDetails) => {
                     <div className='px-10'>
                         <p className=' text-md text-gray-600'>{post.caption}</p>
                     </div>
+
+                    <div className='mt-10 px-10'>
+                        {userProfile && <LikeButton
+                            likes={post.likes}
+                            handleLike={() => handleLike(true)}
+                            handleDislike={() => handleLike(false)}
+                        />}
+                    </div>
+
+                    <Comments />
                 </div>
             </div>
         </div>
