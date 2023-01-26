@@ -18,8 +18,10 @@ type PostDetails = {
 
 const Detail = ({ postDetails }: PostDetails) => {
     const [post, setPost] = useState(postDetails)
-    const [playing, setPlaying] = useState(false)
-    const [isVideoMuted, setIsVideoMuted] = useState(false)
+    const [playing, setPlaying] = useState<boolean>(false);
+    const [isVideoMuted, setIsVideoMuted] = useState<boolean>(false);
+    const [comment, setComment] = useState<string>('');
+    const [isPostingComment, setIsPostingComment] = useState<boolean>(false);
     const router = useRouter()
     const { userProfile } = useAuthStore();
 
@@ -52,9 +54,28 @@ const Detail = ({ postDetails }: PostDetails) => {
         }
     };
 
-    if (!post) {
-        return null
-    }
+    const addComment = async (e: { preventDefault: () => void }) => {
+        e.preventDefault();
+
+        if (userProfile) {
+            if (comment) {
+                setIsPostingComment(true);
+                const res = await axios.put(`http://localhost:3000/api/post/${post._id}`, {
+                    userId: userProfile._id,
+                    comment,
+                });
+
+                setPost({ ...post, comments: res.data.comments });
+                setComment('');
+                setIsPostingComment(false);
+            }
+        }
+    };
+
+
+    // if (!post) {
+    //     return null
+    // }
 
     return (
         <div className='flex w-full abosulte left-0 top-0 bg-white flex-wrap lg:flex-nowrap'>
@@ -127,7 +148,13 @@ const Detail = ({ postDetails }: PostDetails) => {
                         />}
                     </div>
 
-                    <Comments />
+                    <Comments
+                        comment={comment}
+                        setComment={setComment}
+                        addComment={addComment}
+                        comments={post.comments}
+                        isPostingComment={isPostingComment}
+                    />
                 </div>
             </div>
         </div>

@@ -29,7 +29,7 @@ export interface Video {
     userId: string;
 }
 
-export interface IUser {
+export interface UserProps {
     _id: string;
     _type: string;
     userName: string;
