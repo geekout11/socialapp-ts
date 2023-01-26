@@ -14,7 +14,14 @@ import { topics } from '../utils/constants';
 import useAuthStore from '../store/authStore';
 
 /* ANTD */
-import { Button, Card, Input, List, message, Progress } from 'antd'
+import {
+    Button,
+    Card,
+    Input,
+    List,
+    message,
+    Progress
+} from 'antd'
 
 /* FIREBASE */
 import { ref, uploadBytesResumable, getDownloadURL } from '@firebase/storage'
@@ -190,18 +197,21 @@ const Upload = () => {
                         }}
                     />
 
-                    <Card className='w-[100%] h-[170px] mb-10'>
+                    <Card className='w-[100%] h-[180px] mb-10'>
                         {imageFile && (
                             <>
                                 <List.Item
-                                    className='font-semibold w-full mb-5 ml-12'
+                                    className='font-semibold w-full mb-5 flex flex-wrap justify-center items-center flex-col'
                                     extra={[
                                         <Button
                                             key="btnRemoveFile"
                                             onClick={handleRemoveFile}
                                             type="text"
                                             icon={<i className="fas fa-times"></i>}
-                                        />,
+                                            className='bg-[#F51997] text-white text-md font-medium rounded w-28  outline-none flex justify-center mt-2'
+                                        >
+                                            Remove
+                                        </Button>,
                                     ]}
                                 >
 
@@ -222,7 +232,7 @@ const Upload = () => {
                                         </Button>
                                     </div>
 
-                                    <Progress className='w-[100%] flex items-center mt-7 ml-3' percent={progressUpload} />
+                                    <Progress className='w-[100%] flex items-center mt-6 ml-3' percent={progressUpload} />
                                 </div>
 
                             </>
