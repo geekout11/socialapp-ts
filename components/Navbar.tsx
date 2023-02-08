@@ -2,30 +2,33 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { AiOutlineLogout } from 'react-icons/ai';
+import { GrLogout } from 'react-icons/gr';
 import { BiSearch } from 'react-icons/bi';
 import { IoMdAdd } from 'react-icons/io';
-import { GoogleLogin, googleLogout  } from '@react-oauth/google';
+import { GoogleLogin, googleLogout } from '@react-oauth/google';
 
 import useAuthStore from '../store/authStore';
 import { UserProps } from '../types';
 import { createOrGetUser } from '../utils';
 import Logo from '../utils/tiktik-logo.png';
+import { ImCancelCircle } from 'react-icons/im';
+import { AiOutlineMenu } from 'react-icons/ai';
 
 const Navbar = () => {
   const [user, setUser] = useState<UserProps | null>();
   const [searchValue, setSearchValue] = useState('');
+  const [showDropdownMenu, setShowdropdownMenu] = useState(false);
   const router = useRouter();
   const { userProfile, addUser, removeUser } = useAuthStore();
-  
+
   useEffect(() => {
     setUser(userProfile);
   }, [userProfile]);
 
   const handleSearch = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    
-    if(searchValue) {
+
+    if (searchValue) {
       router.push(`/search/${searchValue}`);
     }
   };
@@ -64,7 +67,7 @@ const Navbar = () => {
       </div>
       <div>
         {user ? (
-          <div className='flex gap-5 md:gap-10'>
+          <div className='flex gap-3 md:gap-3'>
             <Link href='/upload'>
               <button className='border-2 px-2 md:px-4 text-md font-semibold flex items-center gap-2 mt-2'>
                 <IoMdAdd className='text-xl' />{' '}
@@ -84,22 +87,32 @@ const Navbar = () => {
                 </div>
               </Link>
             )}
+            <div className='m-2 ml-4 mt-3 text-xl' onClick={() => setShowdropdownMenu((prev) => !prev)}>
+              {showDropdownMenu ? <ImCancelCircle /> : <AiOutlineMenu />}
+            </div>
+            {showDropdownMenu &&
+
               <button
                 type='button'
-                className=' border-2 p-2 rounded-full cursor-pointer outline-none shadow-md'
+                className='flex cursor-pointer m-2'
                 onClick={() => {
                   googleLogout();
                   removeUser();
                 }}
               >
-                <AiOutlineLogout color='red' fontSize={21} />
+                Logout
+                <GrLogout fontSize={21} className='m-1' />
               </button>
+
+            }
+
           </div>
+
         ) : (
-            <GoogleLogin
-              onSuccess={(response) => createOrGetUser(response, addUser)}
-              onError={() => console.log('Login Failed')}
-            />
+          <GoogleLogin
+            onSuccess={(response) => createOrGetUser(response, addUser)}
+            onError={() => console.log('Login Failed')}
+          />
         )}
       </div>
     </div>
