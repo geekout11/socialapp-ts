@@ -12,7 +12,7 @@ import Link from 'next/link'
 import { AiFillHome, AiOutlineMenu } from 'react-icons/ai'
 import { ImCancelCircle } from 'react-icons/im'
 
-const Sidebar = () => {
+const Sidebar = ({ allUsers, fetchAllUsers }: any) => {
     const [showSidebar, setShowSidebar] = useState(true);
 
     const userProfile = false;
@@ -58,7 +58,8 @@ const Sidebar = () => {
                         </div>
                     )}
                     <Discover />
-                    <SuggestedAccounts />
+                    <SuggestedAccounts fetchAllUsers={fetchAllUsers}
+                        allUsers={allUsers} />
                     <Footer />
                 </div>
             )}
