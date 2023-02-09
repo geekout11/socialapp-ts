@@ -33,7 +33,7 @@ const Upload = () => {
     const [topic, setTopic] = useState<String>(topics[0].name);
     const [isUploading, setIsUploading] = useState(false)
     const [savingPost, setSavingPost] = useState<Boolean>(false);
-    const [videoAsset, setVideoAsset] = useState<SanityAssetDocument | undefined>();
+    const [videoAsset, setVideoAsset] = useState<SanityAssetDocument | any>();
     const [wrongFileType, setWrongFileType] = useState<Boolean>(false);
     const [imageFile, setImageFile] = useState<File>()
     const [progressUpload, setProgressUpload] = useState(0)
@@ -46,7 +46,7 @@ const Upload = () => {
         if (files && files[0].size < 10000000000000000) {
             setImageFile(files[0])
 
-            console.log(files[0])
+            // console.log(files[0])
         } else {
             message.error('File size to large')
         }
@@ -54,7 +54,7 @@ const Upload = () => {
 
     const uploadVideo = async (e: any) => {
         const selectedFile = e.target.files[0];
-        const fileTypes = ['video/mp4', 'video/webm', 'video/ogg', 'image/png'];
+        const fileTypes = ['video/mp4', 'video/webm', 'video/ogg'];
 
         if (fileTypes.includes(selectedFile.type)) {
             setWrongFileType(false);
@@ -113,8 +113,11 @@ const Upload = () => {
         }
     }
 
-    const handleRemoveFile = () => setImageFile(undefined)
-
+    const handleRemoveFile = () => {
+            setImageFile(undefined)
+            setDownloadURL('')
+            setProgressUpload(0)
+    }
 
     useEffect(() => {
         if (!userProfile) router.push('/');
@@ -152,6 +155,7 @@ const Upload = () => {
     const handleDiscard = () => {
         setSavingPost(false);
         setVideoAsset(undefined);
+        setDownloadURL('')
         setCaption('');
         setTopic('');
     };
@@ -170,9 +174,9 @@ const Upload = () => {
                                 <video
                                     src={downloadURL}
                                     controls
+                                    controlsList='nodownload nofullscreen'
                                     loop
                                     autoPlay
-
                                     className='rounded-xl h-[460px]'
                                 >
                                 </video>
@@ -205,7 +209,9 @@ const Upload = () => {
                                     extra={[
                                         <Button
                                             key="btnRemoveFile"
-                                            onClick={handleRemoveFile}
+                                            onClick={(e:any) => {
+                                                handleRemoveFile()
+                                            }}
                                             type="text"
                                             icon={<i className="fas fa-times"></i>}
                                             className='bg-[#F51997] text-white text-md font-medium rounded w-28  outline-none flex justify-center mt-2'
