@@ -79,7 +79,6 @@ const VideoCard: NextPage<VideoProps> = ({ post: { caption, postedBy, video, _id
                   className=' rounded-full'
                   src={postedBy?.image}
                   alt='user-profile'
-                  layout='responsive'
                 />
               </>
             </Link>

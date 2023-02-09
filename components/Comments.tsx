@@ -45,7 +45,6 @@ const Comments = ({ comment, setComment, addComment, comments, isPostingComment}
                                 className='rounded-full cursor-pointer'
                                 src={user.image}
                                 alt='user-profile'
-                                layout='responsive'
                               />
                             </div>
   

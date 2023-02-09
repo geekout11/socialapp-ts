@@ -37,7 +37,6 @@ const SuggestedAccounts: NextPage<AllUsers> = () => {
                                     className='rounded-full'
                                     src={user.image}
                                     alt='user-profile'
-                                    layout='responsive'
                                 />
                             </div>
 
