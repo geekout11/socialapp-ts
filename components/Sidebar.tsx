@@ -18,11 +18,11 @@ const Sidebar = ({ allUsers, fetchAllUsers }: any) => {
 
     return (
         <div>
-            <div className='block xl:hidden m-2 ml-4 mt-3 text-xl' onClick={() => setShowSidebar((prev) => !prev)}>
+            <div className='block xl:hidden m-2 ml-4 mt-4 text-xl px-3 cursor-pointer' onClick={() => setShowSidebar((prev) => !prev)}>
                 {showSidebar ? <ImCancelCircle /> : <AiOutlineMenu />}
             </div>
             {showSidebar && (
-                <div className='xl:w-400 w-20 flex flex-col justify-start mb-10 border-r-2 border-gray-100 p-4'>
+                <div className='xl:w-400 w-20 flex flex-col justify-start mb-10 mt-3 border-r-2 border-gray-100 px-4'>
 
                     <div className='xl:border-b-2 border-gray-200 xl:pb-4'>
                         <Link href='/'>
